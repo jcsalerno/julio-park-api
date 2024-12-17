@@ -26,7 +26,7 @@ public class Usuario implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role",  length = 25)
-    private Role role;
+    private Role role = Role.ROLE_CLIENTE;
 
     @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;

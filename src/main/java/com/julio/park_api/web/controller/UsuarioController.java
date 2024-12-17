@@ -2,6 +2,10 @@ package com.julio.park_api.web.controller;
 import com.julio.park_api.entity.Usuario;
 import com.julio.park_api.service.UsuarioService;
 
+
+import com.julio.park_api.web.dto.UsuarioCreateDto;
+import com.julio.park_api.web.dto.mapper.UsuarioMapper;
+import com.julio.park_api.web.dto.mapper.UsuarioResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +28,9 @@ public class UsuarioController {
 
 
     @PostMapping
-    public ResponseEntity<Usuario> create(@Validated @RequestBody Usuario usuario) {
-        Usuario user = usuarioService.salvar(usuario);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UsuarioResponseDto> create(@Validated @RequestBody UsuarioCreateDto createDto) {
+        Usuario user = usuarioService.salvar(UsuarioMapper.toUsuario(createDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioMapper.toDto(user));
     }
 
     @GetMapping("/{id}")
