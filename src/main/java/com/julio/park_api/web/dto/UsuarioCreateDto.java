@@ -1,8 +1,8 @@
 package com.julio.park_api.web.dto;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
@@ -10,6 +10,11 @@ import lombok.ToString;
 @ToString
 public class UsuarioCreateDto {
 
+    @NotBlank
+    @Email( message = "Formato do email inválido!", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String username;
+
+    @NotBlank
+    @Size(min = 6, max= 6)
     private String password;
 }

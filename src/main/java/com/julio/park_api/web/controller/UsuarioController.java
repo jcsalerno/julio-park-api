@@ -7,6 +7,7 @@ import com.julio.park_api.web.dto.UsuarioCreateDto;
 import com.julio.park_api.web.dto.UsuarioSenhaDto;
 import com.julio.park_api.web.dto.mapper.UsuarioMapper;
 import com.julio.park_api.web.dto.mapper.UsuarioResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class UsuarioController {
 
 
     @PostMapping
-    public ResponseEntity<UsuarioResponseDto> create(@Validated @RequestBody UsuarioCreateDto createDto) {
+    public ResponseEntity<UsuarioResponseDto> create(@Validated @Valid @RequestBody UsuarioCreateDto createDto) {
         Usuario user = usuarioService.salvar(UsuarioMapper.toUsuario(createDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(UsuarioMapper.toDto(user));
     }
