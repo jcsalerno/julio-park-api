@@ -1,6 +1,7 @@
 package com.julio.park_api.service;
 import com.julio.park_api.entity.Usuario;
 import com.julio.park_api.exception.EntityNotFoundException;
+import com.julio.park_api.exception.PasswordInvalidException;
 import com.julio.park_api.exception.UserNameUniqueViolationException;
 import com.julio.park_api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,12 +44,12 @@ public class UsuarioService {
     public Usuario editarSenha(Long id, String senhaAtual, String novaSenha, String confirmaSenha) {
 
         if(!novaSenha.equals(confirmaSenha)) {
-            throw new RuntimeException("Nova senha não confere com confirmação de senha");
+            throw new PasswordInvalidException("Nova senha não confere com confirmação de senha");
         }
 
         Usuario user = buscarPorId(id);
         if(!user.getPassword().equals(senhaAtual)) {
-            throw new RuntimeException("Sua senha não confere");
+            throw new PasswordInvalidException("Sua senha não confere");
         }
 
         user.setPassword(novaSenha);
