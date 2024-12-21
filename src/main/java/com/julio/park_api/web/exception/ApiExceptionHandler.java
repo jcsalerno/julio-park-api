@@ -1,4 +1,5 @@
 package com.julio.park_api.web.exception;
+import com.julio.park_api.exception.EntityNotFoundException;
 import com.julio.park_api.exception.UserNameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +14,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMessage> entityNotFoundException(RuntimeException ex,
+                                                                        HttpServletRequest request
+    ){
+
+        log.error("API Error - ", ex);
+        return ResponseEntity
+                .status(HttpStatus. NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
+
+    }
+
     @ExceptionHandler(UserNameUniqueViolationException.class)
-    public ResponseEntity<ErrorMessage> methodArgumentNotValidException(RuntimeException ex,
+    public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request
                                                                         ){
 

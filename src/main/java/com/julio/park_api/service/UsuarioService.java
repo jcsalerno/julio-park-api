@@ -1,15 +1,11 @@
 package com.julio.park_api.service;
 import com.julio.park_api.entity.Usuario;
+import com.julio.park_api.exception.EntityNotFoundException;
 import com.julio.park_api.exception.UserNameUniqueViolationException;
 import com.julio.park_api.repository.UsuarioRepository;
-
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -39,7 +35,7 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id).orElseThrow(
-                () -> new   RuntimeException("Usuario não encontrado")
+                () -> new EntityNotFoundException(String.format("Usuário id=%s não encontrado", id))
         );
     }
 
