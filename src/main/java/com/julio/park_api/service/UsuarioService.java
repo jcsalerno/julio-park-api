@@ -1,9 +1,11 @@
 package com.julio.park_api.service;
 import com.julio.park_api.entity.Usuario;
+import com.julio.park_api.exception.UserNameUniqueViolationException;
 import com.julio.park_api.repository.UsuarioRepository;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +27,13 @@ public class UsuarioService {
 
     @Transactional
     public Usuario salvar(Usuario usuario) {
-        System.out.println("Salvando usuário: " + usuario);
-        return usuarioRepository.save(usuario);
+        try {
+            System.out.println("Salvando usuário: " + usuario);
+            return usuarioRepository.save(usuario);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            throw new UserNameUniqueViolationException(String.format("Username %s já cadastrado", usuario.getUsername()));
+        }
+
     }
 
     @Transactional(readOnly = true)
