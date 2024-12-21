@@ -15,6 +15,6 @@ public class UsuarioCreateDto {
     private String username;
 
     @NotBlank
-    @Size(min = 6, max= 6)
+    @Size(message = "A senha precisa conter 6 caracteres", min = 6, max= 6)
     private String password;
 }

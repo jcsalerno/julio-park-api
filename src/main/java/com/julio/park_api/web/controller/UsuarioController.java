@@ -1,8 +1,6 @@
 package com.julio.park_api.web.controller;
 import com.julio.park_api.entity.Usuario;
 import com.julio.park_api.service.UsuarioService;
-
-
 import com.julio.park_api.web.dto.UsuarioCreateDto;
 import com.julio.park_api.web.dto.UsuarioSenhaDto;
 import com.julio.park_api.web.dto.mapper.UsuarioMapper;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 
