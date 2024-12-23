@@ -29,6 +29,10 @@ public class ErrorMessage {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Map<String, String> erros;
 
+    public ErrorMessage() {
+
+    }
+
     public ErrorMessage(String path) {
         this.path = path;
     }
