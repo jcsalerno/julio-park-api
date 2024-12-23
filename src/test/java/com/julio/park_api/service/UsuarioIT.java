@@ -89,5 +89,72 @@ public class UsuarioIT {
                 Arguments.of("abcd")
         );
     }
+
+    @ParameterizedTest
+    @MethodSource(value = "duplicateUsernames")
+    public void createUsuario_ComUserNameRepetido_RetornarErrorMessageStatus409(String username) {
+
+        testClient
+                .post()
+                .uri("/api/v1/usuarios")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioCreateDto(username, "123456"))
+                .exchange()
+                .expectStatus().isCreated();
+
+
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri("/api/v1/usuarios")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioCreateDto(username, "123456"))
+                .exchange()
+                .expectStatus().isEqualTo(409)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
+    }
+
+    private static Stream<Arguments> duplicateUsernames() {
+        return Stream.of(
+                Arguments.of("tati@teste.com.br"),
+                Arguments.of("tati@teste.com.br")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "userIds")
+    public void buscarUsuarioPorId_RetornarUsuarioComStatus200(Long userId) {
+
+        testClient
+                .post()
+                .uri("/api/v1/usuarios")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioCreateDto("tody@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isCreated();  // Sucesso ao criar o usuário
+
+        UsuarioResponseDto responseBody = testClient
+                .get()
+                .uri("/api/v1/usuarios/{id}", userId)
+                .exchange()
+                .expectStatus().isOk()  // Espera o status 200
+                .expectBody(UsuarioResponseDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(userId);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getUsername()).isEqualTo("tody@gmail.com");
+    }
+
+    private static Stream<Arguments> userIds() {
+        return Stream.of(
+                Arguments.of(1L),
+                Arguments.of(2L)
+        );
+    }
+
 }
 
