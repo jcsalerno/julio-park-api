@@ -1,7 +1,9 @@
 package com.julio.park_api.service;
 import com.julio.park_api.web.dto.UsuarioCreateDto;
+import com.julio.park_api.web.dto.UsuarioSenhaDto;
 import com.julio.park_api.web.dto.mapper.UsuarioResponseDto;
 import com.julio.park_api.web.exception.ErrorMessage;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -134,7 +137,7 @@ public class UsuarioIT {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("tody@gmail.com", "123456"))
                 .exchange()
-                .expectStatus().isCreated();  // Sucesso ao criar o usuário
+                .expectStatus().isCreated();
 
         UsuarioResponseDto responseBody = testClient
                 .get()
@@ -155,6 +158,85 @@ public class UsuarioIT {
                 Arguments.of(2L)
         );
     }
+
+
+    @Test
+    public void editarSenha_ComDadosValidos_RetornarStatus204() {
+        testClient
+                .patch()
+                .uri("/api/v1/usuarios/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDto("123456", "123456", "123456"))
+                .exchange()
+                .expectStatus().isNoContent();
+    }
+
+    @Test
+    public void editarSenha_ComIdInexistente_RetornarErrorMessageComStatus404() {
+        ErrorMessage responseBody = testClient
+                .patch()
+                .uri("/api/v1/usuarios/0")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDto("123456", "123456", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+
+    }
+
+    @Test
+    public void editarSenha_ComCamposInvalidos_RetornarErrorMessageComStatus422() {
+        ErrorMessage responseBody = testClient
+                .patch()
+                .uri("/api/v1/usuarios/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDto("", "", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+
+    }
+
+    @ParameterizedTest
+    @MethodSource(value = "invalidPasswords")
+    public void editarSenha_ComSenhaInvalida_RetornarErrorMessageStatus422(String password) {
+        ErrorMessage responseBody = testClient
+                .patch()
+                .uri("/api/v1/usuarios/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UsuarioSenhaDto("tody@gmail.com", password, password))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+    }
+
+@Test
+    public void retornarTodos_OsUsuarios_DaLista() {
+
+    List<UsuarioResponseDto> usuarioResponseDto = testClient
+            .get()
+            .uri("/api/v1/usuarios")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(UsuarioResponseDto.class)
+            .returnResult().getResponseBody();
+
+    org.assertj.core.api.Assertions.assertThat(usuarioResponseDto).isNotNull();
+    Assertions.assertThat(usuarioResponseDto.size()).isEqualTo(3);
+
+}
 
 }
 
