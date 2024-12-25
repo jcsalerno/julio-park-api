@@ -1,4 +1,5 @@
 package com.julio.park_api.web.controller;
+
 import com.julio.park_api.jwt.JwtToken;
 import com.julio.park_api.jwt.JwtUserDetailsService;
 import com.julio.park_api.web.dto.UsuarioLoginDto;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 @Data
 @RequiredArgsConstructor
 @Slf4j
@@ -32,7 +34,7 @@ public class AuthenticationController {
         log.info("Processo de autenticação pelo login {}", dto.getUsername());
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getUsername());
+                    new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
             authenticationManager.authenticate(authenticationToken);
             JwtToken token = detailsService.getTokenAuthenticated(dto.getUsername());
             return ResponseEntity.ok(token);
@@ -43,6 +45,5 @@ public class AuthenticationController {
         return ResponseEntity
                 .badRequest()
                 .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, "Credenciais inválidas"));
-
     }
 }
