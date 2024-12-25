@@ -1,17 +1,15 @@
 package com.julio.park_api.jwt;
 
 import com.julio.park_api.entity.Usuario;
-import org.springframework.security.core.GrantedAuthority;
+import com.julio.park_api.service.UsuarioService;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
-
-import java.util.Collection;
 
 public class JwtUserDetails extends User {
 
     private Usuario usuario;
 
-    public JwtUserDetails(Usuario usuario) {
+    public JwtUserDetails(UsuarioService usuario) {
         super(usuario.getUsername(), usuario.getPassword(), AuthorityUtils.createAuthorityList(usuario.getRole().name()));
         this.usuario = usuario;
     }
