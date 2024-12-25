@@ -1,15 +1,15 @@
 package com.julio.park_api.jwt;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 
 @Slf4j
 public class JwtUtils {
@@ -24,7 +24,7 @@ public class JwtUtils {
     private JwtUtils(){
     }
 
-    private static Key generateKey() {
+    private static javax.crypto.SecretKey generateKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -37,46 +37,44 @@ public class JwtUtils {
     public static JwtToken createToken(String username, String role) {
         Date issuedAt = new Date();
         Date limit = toExpireDate(issuedAt);
-
         String token = Jwts.builder()
-                .setHeaderParam("typ", "JWT")
-                .setSubject(username)
-                .setIssuedAt(issuedAt)
-                .setExpiration(limit)
-                .signWith(generateKey(), SignatureAlgorithm.HS256)
+                .header().add("typ", "JWT")
+                .and()
+                .subject(username)
+                .issuedAt(issuedAt)
+                .expiration(limit)
+                .signWith(generateKey())
                 .claim("role", role)
                 .compact();
         return new JwtToken(token);
-
     }
 
-    private static Claims getClaimsFromToken(String token){
-
+    private static Claims getClaimsFromToken(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(generateKey()).build()
-                    .parseClaimsJws(refactorToken(token)).getBody();
-
+                    .verifyWith(generateKey())
+                    .build()
+                    .parseSignedClaims(refactorToken(token)).getPayload();
         } catch (JwtException ex) {
-            log.error(String.format("Token inválido %s", ex.getMessage()));
+            log.error("Token invalido {}", ex.getMessage());
         }
         return null;
-
     }
 
-    public static String getUserNameFromToke(String token) {
-        return getClaimsFromToken(token).getSubject();
+    public static String getUserNameFromToken(String token) {
+        return Objects.requireNonNull(getClaimsFromToken(token)).getSubject();
     }
 
     public static boolean isTokenValid(String token) {
         try {
-         Jwts.parser()
-                    .setSigningKey(generateKey()).build()
-                    .parseClaimsJws(refactorToken(token));
-         return true;
+            Jws<Claims> claimsJws = Jwts.parser()
+                    .verifyWith(generateKey())
+                    .build()
+                    .parseSignedClaims((refactorToken(token)));
+            return true;
 
         } catch (JwtException ex) {
-            log.error(String.format("Token inválido %s", ex.getMessage()));
+            log.error("Token inválido {}", ex.getMessage());
         }
         return false;
     }
