@@ -1,5 +1,6 @@
 package com.julio.park_api.config;
 
+import com.julio.park_api.jwt.JwtAuthorizationFilter;
 import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableMethodSecurity
 @EnableWebMvc
@@ -27,11 +29,21 @@ public class SpringSecurityConfig {
                 .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "api/v1/usuarios").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).build();
+                ).addFilterBefore(
+                        jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class
+                )
+                .build();
     }
+
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter() {
+        return new JwtAuthorizationFilter();
+    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){
