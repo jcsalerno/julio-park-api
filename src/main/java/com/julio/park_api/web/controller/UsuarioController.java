@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,11 +59,16 @@ public class UsuarioController {
 
 
     @Operation(summary = "Retorna um usuário pelo ID",
-            description = "Recurso retornar um usuário pelo ID",
+            description = "Requisição exige um Beater Token. Acesso restrito a ADMIN|CLIENTE.",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso recuperado com sucesso",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = UsuarioResponseDto.class))),
+
+                    @ApiResponse(responseCode = "403", description = "Usuário sem permissão para acessar este recurso",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
 
                     @ApiResponse(responseCode = "404", description = "Recurso (id) não encontrado",
                             content = @Content(mediaType = "application/json",
@@ -77,13 +83,18 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Atualiza a senha",
-            description = "Recurso para atualizar a senha",
+            description = "Requisição exige um Beater Token. Acesso restrito a ADMIN|CLIENTE.",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "204", description = "Atualizada senha com sucesso",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = Void.class))),
 
                     @ApiResponse(responseCode = "400", description = "Senha não confere, por favor, tente novamente.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+
+                    @ApiResponse(responseCode = "403", description = "Usuário sem permissão para acessar este recurso",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorMessage.class))),
 
@@ -103,12 +114,17 @@ public class UsuarioController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Retorna todos os usuários",
-            description = "Recurso retornar para retornar todos os usuários",
+    @Operation(summary = "Retorna todos os usuários cadastrados",
+            description = "Requisição exige um Beater Token. Acesso restrito a ADMIN.",
+            security = @SecurityRequirement(name = "security"),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso recuperado com sucesso",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = UsuarioResponseDto.class)))
+                                    schema = @Schema(implementation = UsuarioResponseDto.class))),
+
+                    @ApiResponse(responseCode = "403", description = "Usuário sem permissão para acessar este recurso",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
