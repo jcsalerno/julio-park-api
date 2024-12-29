@@ -2,6 +2,7 @@ package com.julio.park_api.service;
 
 import com.julio.park_api.entity.Cliente;
 import com.julio.park_api.exception.CpfUniqueViolationExcpetion;
+import com.julio.park_api.exception.EntityNotFoundException;
 import com.julio.park_api.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,5 +23,12 @@ public class ClienteService {
             throw new CpfUniqueViolationExcpetion(String.format("CPF '%s' não pode ser cadastrado, já existe no sistema",
                     cliente.getCpf()));
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Cliente buscarPorId(Long id) {
+        return clienteRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Cliente id=%s não encontrado no sistema", id))
+        );
     }
 }
