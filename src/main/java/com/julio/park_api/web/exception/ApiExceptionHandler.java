@@ -1,4 +1,5 @@
 package com.julio.park_api.web.exception;
+import com.julio.park_api.exception.CpfUniqueViolationExcpetion;
 import com.julio.park_api.exception.EntityNotFoundException;
 import com.julio.park_api.exception.PasswordInvalidException;
 import com.julio.park_api.exception.UserNameUniqueViolationException;
@@ -56,7 +57,7 @@ public class ApiExceptionHandler {
 
     }
 
-    @ExceptionHandler(UserNameUniqueViolationException.class)
+    @ExceptionHandler({UserNameUniqueViolationException.class, CpfUniqueViolationExcpetion.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request
                                                                         ){
