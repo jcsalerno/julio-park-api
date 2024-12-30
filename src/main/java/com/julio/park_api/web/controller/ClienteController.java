@@ -2,11 +2,14 @@ package com.julio.park_api.web.controller;
 
 import com.julio.park_api.entity.Cliente;
 import com.julio.park_api.jwt.JwtUserDetails;
+import com.julio.park_api.repository.projection.ClienteProjection;
 import com.julio.park_api.service.ClienteService;
 import com.julio.park_api.service.UsuarioService;
 import com.julio.park_api.web.dto.ClienteCreateDto;
 import com.julio.park_api.web.dto.ClienteResponseDto;
+import com.julio.park_api.web.dto.PageableDto;
 import com.julio.park_api.web.dto.mapper.ClienteMapper;
+import com.julio.park_api.web.dto.mapper.PageableMapper;
 import com.julio.park_api.web.dto.mapper.UsuarioResponseDto;
 import com.julio.park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,10 +18,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -79,8 +87,17 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN)'")
     public ResponseEntity<ClienteResponseDto> getById(@PathVariable Long id) {
         Cliente cliente = clienteService.buscarPorId(id);
         return ResponseEntity.ok(ClienteMapper.toDto(cliente));
     }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN)'")
+    public ResponseEntity<PageableDto> getAll(Pageable pageable) {
+        Page<ClienteProjection> clientes = clienteService.buscarTodos(pageable);
+        return ResponseEntity.ok(PageableMapper.toDto(clientes));
+    }
+
 }
