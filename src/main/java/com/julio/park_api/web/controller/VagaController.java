@@ -44,7 +44,11 @@ public class VagaController {
                     @ApiResponse(responseCode = "422",
                             description = "Recurso não processado por falta de dados ou dados inválidos",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ErrorMessage.class)))
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+
+                    @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil do cliente",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
             })
 
     @PostMapping
