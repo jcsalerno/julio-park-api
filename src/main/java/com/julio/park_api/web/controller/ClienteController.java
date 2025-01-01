@@ -195,6 +195,31 @@ public class ClienteController {
         return ResponseEntity.ok(PageableMapper.toDto(clientes));
     }
 
+    @Operation(
+            summary = "Recuperar Lista de Clientes",
+            description = "Requisição exige uso de um bearer token. Acesso restrito à Role='ADMIN'.",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Recurso recuperado com sucesso",
+                            content = @Content(
+                                    mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = PageableDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Recurso não permitido ao perfil de CLIENTE",
+                            content = @Content(
+                                    mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    )
+            }
+    )
+
+
     @GetMapping("/detalhes")
     @PreAuthorize("hasRole('CLIENTE)'")
     public ResponseEntity<ClienteResponseDto> getDetalhes(@AuthenticationPrincipal JwtUserDetails userDetails) {
