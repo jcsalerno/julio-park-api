@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface VagaRepository extends JpaRepository<Vaga, Long> {
     Optional <Vaga> findByCodigo(String codigo);
+
+    Optional <Vaga> findByStatus(Vaga.StatusVaga statusVaga);
 }

@@ -2,11 +2,13 @@ package com.julio.park_api.service;
 import com.julio.park_api.entity.ClienteVaga;
 import com.julio.park_api.repository.ClienteVagaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
+@Repository
 public class ClienteVagaService {
 
     private final ClienteVagaRepository repository;
