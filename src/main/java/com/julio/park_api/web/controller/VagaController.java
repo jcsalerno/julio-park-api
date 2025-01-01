@@ -72,9 +72,14 @@ public class VagaController {
 
         @ApiResponse(responseCode = "404", description = "Vaga não localizada",
                 content = @Content(mediaType = "application/json;charset=UTF-8",
-                        schema = @Schema(implementation = ErrorMessage.class)))
+                        schema = @Schema(implementation = ErrorMessage.class))),
 
-    })
+        @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil do cliente",
+                              content = @Content(mediaType = "application/json;charset=UTF-8",
+                                      schema = @Schema(implementation = ErrorMessage.class))),
+
+
+              })
 
     @GetMapping("/{codigo}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -82,6 +87,5 @@ public class VagaController {
         Vaga vaga = vagaService.buscarPorCodigo(codigo);
         return ResponseEntity.ok(VagaMapper.toDto(vaga));
     }
-
 
 }
