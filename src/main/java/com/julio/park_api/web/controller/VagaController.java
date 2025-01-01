@@ -7,6 +7,7 @@ import com.julio.park_api.web.dto.mapper.UsuarioResponseDto;
 import com.julio.park_api.web.dto.mapper.VagaMapper;
 import com.julio.park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -53,7 +54,10 @@ public class VagaController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> create(@Valid VagaCreateDto dto) {
+    public ResponseEntity<Void> create(
+            @Valid
+            @Parameter(description = "DTO para criar uma nova vaga", required = true)
+            @RequestBody VagaCreateDto dto) {
         Vaga vaga = VagaMapper.toVaga(dto);
         vagaService.salvar(vaga);
         URI location = ServletUriComponentsBuilder
