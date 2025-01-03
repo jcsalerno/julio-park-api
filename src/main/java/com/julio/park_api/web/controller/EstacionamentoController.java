@@ -241,6 +241,58 @@ public class EstacionamentoController {
 
     }
 
+    @Operation(
+            summary = "Listar todos os estacionamentos do cliente autenticado",
+            description = "Retorna uma lista paginada de todos os registros de estacionamento do cliente autenticado. Requisição exige autenticação com token e permissão do perfil 'CLIENTE'.",
+            security = @SecurityRequirement(name = "security"),
+            parameters = {
+                    @Parameter(
+                            in = ParameterIn.QUERY,
+                            name = "page",
+                            description = "Número da página a ser retornada",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "0"))
+                    ),
+                    @Parameter(
+                            in = ParameterIn.QUERY,
+                            name = "size",
+                            description = "Número de registros por página",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "5"))
+                    ),
+                    @Parameter(
+                            in = ParameterIn.QUERY,
+                            name = "sort",
+                            description = "Critério de ordenação, ex.: dataEntrada,asc",
+                            array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "dataEntrada,asc")),
+                            hidden = true
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Lista de estacionamentos retornada com sucesso",
+                            content = @Content(
+                                    mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = PageableDto.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Acesso não permitido para o perfil do usuário",
+                            content = @Content(
+                                    mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Nenhum registro encontrado para o cliente",
+                            content = @Content(
+                                    mediaType = "application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    )
+            }
+    )
 
     @GetMapping
     @PreAuthorize("hasRole('CLIENTE')")
