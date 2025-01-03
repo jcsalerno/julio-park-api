@@ -2,7 +2,10 @@ package com.julio.park_api.service;
 import com.julio.park_api.entity.ClienteVaga;
 import com.julio.park_api.exception.EntityNotFoundException;
 import com.julio.park_api.repository.ClienteVagaRepository;
+import com.julio.park_api.repository.projection.ClienteVagaProjection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,5 +37,10 @@ public class ClienteVagaService {
     @Transactional(readOnly = true)
     public long getTotalDeVezesEstacionamentoCompleto(String cpf) {
         return repository.countByClienteCpfAndDataSaidaIsNotNull(cpf);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ClienteVagaProjection> buscarTodosPorClienteCpf(String cpf, Pageable pageable) {
+        return repository.findAllByClienteCpf(cpf, pageable);
     }
 }
