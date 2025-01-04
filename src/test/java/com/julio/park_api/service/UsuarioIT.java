@@ -134,6 +134,7 @@ public class UsuarioIT {
         testClient
                 .post()
                 .uri("/api/v1/usuarios")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "tody@gmail.com", "123456"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(new UsuarioCreateDto("tody@gmail.com", "123456"))
                 .exchange()
