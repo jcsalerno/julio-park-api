@@ -8,7 +8,7 @@ A API permite que administradores gerenciem usuários, clientes e vagas, enquant
 
 ## Tecnologias Utilizadas
 
-- **Java 17**
+- **Java 21**
 - **Spring Boot**
 - **Spring Security** (para autenticação com JWT)
 - **JPA** (para persistência no banco de dados)
