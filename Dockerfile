@@ -7,18 +7,17 @@ RUN apt-get update && apt-get install -y openjdk-21-jdk maven
 # Definir diretório de trabalho
 WORKDIR /build
 
-# Copiar o arquivo pom.xml e o script mvnw
-COPY mvnw ./
+# Copiar o arquivo pom.xml
 COPY pom.xml ./
-
-# Garantir permissão de execução do script mvnw
-RUN chmod +x mvnw
 
 # Copiar o restante dos arquivos do projeto
 COPY . /build
 
+# Garantir permissão de execução do script mvnw (caso queira usar)
+RUN chmod +x mvnw
+
 # Construir a aplicação
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Etapa 2: Produção
 FROM openjdk:21-jdk-slim
