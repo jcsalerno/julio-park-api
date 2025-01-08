@@ -7,9 +7,8 @@ RUN apt-get update && apt-get install -y openjdk-21-jdk maven
 # Definir diretório de trabalho
 WORKDIR /build
 
-# Copiar os arquivos necessários para o build
+# Copiar o arquivo pom.xml e o script mvnw
 COPY mvnw ./
-COPY .mvn/ .mvn/
 COPY pom.xml ./
 
 # Garantir permissão de execução do script mvnw
