@@ -1,25 +1,14 @@
 # Etapa 1: Build
-FROM ubuntu:latest as build
+FROM ubuntu:latest AS build
 
-# Instalar dependências
-RUN apt-get update && apt-get install -y openjdk-21-jdk maven
+RUN apt-get update
+RUN apt-get install openjdk-21-jdk -y
 
-# Definir diretório de trabalho
 WORKDIR /build
+COPY . .
 
-# Copiar o arquivo pom.xml
-COPY pom.xml ./
+RUN ./mvnw clean package -DskipTests
 
-# Copiar o restante dos arquivos do projeto
-COPY . /build
-
-# Garantir permissão de execução do script mvnw (caso queira usar)
-RUN chmod +x mvnw
-
-# Construir a aplicação
-RUN mvn clean package -DskipTests
-
-# Etapa 2: Produção
 FROM openjdk:21-jdk-slim
 
 # Copiar o JAR gerado para o contêiner de produção
