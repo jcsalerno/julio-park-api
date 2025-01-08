@@ -4,7 +4,10 @@ FROM ubuntu:latest AS build
 RUN apt-get update && apt-get install -y openjdk-21-jdk maven
 
 WORKDIR /build
+
 COPY . .
+
+RUN chmod +x mvnw
 
 RUN ./mvnw clean package -DskipTests
 
