@@ -1,4 +1,3 @@
-# Etapa 1: Build
 FROM ubuntu:latest AS build
 
 RUN apt-get update && apt-get install -y openjdk-21-jdk maven
@@ -7,6 +6,7 @@ WORKDIR /build
 
 COPY . .
 
+RUN ls -l  # Para verificar se o mvnw foi copiado corretamente
 RUN chmod +x mvnw
 
 RUN ./mvnw clean package -DskipTests
